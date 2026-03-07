@@ -27,7 +27,10 @@ public class EquivalenciaService {
     // Listar Grupos Disponíveis
     // ====================================================
     public List<String> listarGrupos() {
-        return alimentoRepository.findDistinctGrupos();
+        return alimentoRepository.findDistinctGruposEnum()
+            .stream()
+            .map(GrupoAlimentar::getDescricao)
+            .collect(Collectors.toList());
     }
 
     // ====================================================
