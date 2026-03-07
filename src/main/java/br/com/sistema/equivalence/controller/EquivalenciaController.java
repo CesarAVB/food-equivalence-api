@@ -41,8 +41,7 @@ public class EquivalenciaController {
     // Endpoints - Listar Alimentos por Grupo
     // ====================================================
     @GetMapping("/alimentos/grupo/{grupo}")
-    public ResponseEntity<List<AlimentoListaDTO>> listarAlimentosPorGrupo(
-            @PathVariable String grupo) {
+    public ResponseEntity<List<AlimentoListaDTO>> listarAlimentosPorGrupo(@PathVariable String grupo) {
         // Converter string do frontend para Enum
         GrupoAlimentar grupoEnum = GrupoAlimentar.valueOf(grupo.toUpperCase());
         List<AlimentoListaDTO> alimentos = equivalenciaService.listarAlimentosPorGrupo(grupoEnum);
@@ -53,8 +52,7 @@ public class EquivalenciaController {
     // Endpoints - Buscar Alimentos por Descrição
     // ====================================================
     @GetMapping("/alimentos/buscar")
-    public ResponseEntity<List<AlimentoListaDTO>> buscarAlimentos(
-            @RequestParam String descricao) {
+    public ResponseEntity<List<AlimentoListaDTO>> buscarAlimentos(@RequestParam String descricao) {
         List<AlimentoListaDTO> alimentos = equivalenciaService.buscarAlimentos(descricao);
         return ResponseEntity.ok(alimentos);
     }
@@ -63,8 +61,7 @@ public class EquivalenciaController {
     // Endpoints - Calcular Equivalências
     // ====================================================
     @PostMapping("/calcular")
-    public ResponseEntity<EquivalenciaResponse> calcularEquivalencias(
-            @RequestBody CalcularEquivalenciasRequest request) {
+    public ResponseEntity<EquivalenciaResponse> calcularEquivalencias(@RequestBody CalcularEquivalenciasRequest request) {
         EquivalenciaResponse response = equivalenciaService.calcularEquivalencias(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
