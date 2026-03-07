@@ -24,6 +24,6 @@ public interface AlimentoRepository extends JpaRepository<Alimento, Integer> {
     // ====================================================
     // Grupos Distintos
     // ====================================================
-    @Query("SELECT DISTINCT a.grupo.descricao FROM Alimento a ORDER BY a.grupo.descricao")
-    List<String> findDistinctGrupos();
+    @Query("SELECT DISTINCT a.grupo FROM Alimento a ORDER BY a.grupo")
+    List<GrupoAlimentar> findDistinctGruposEnum();
 }
