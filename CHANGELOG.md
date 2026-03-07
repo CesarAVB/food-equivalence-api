@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/CesarAVB/food-equivalence-api/compare/v1.3.0...v1.4.0) (2026-03-07)
+
+### Features
+
+* **docker:** adiciona Dockerfile para construção e execução da ([d401d45](https://github.com/CesarAVB/food-equivalence-api/commit/d401d452b790e781c1ba7ef92e61fb55d9e774b3))
+
 ## [1.3.0](https://github.com/CesarAVB/food-equivalence-api/compare/v1.2.0...v1.3.0) (2026-03-07)
 
 ### Features
