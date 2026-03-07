@@ -1,3 +1,16 @@
+## [1.3.0](https://github.com/CesarAVB/food-equivalence-api/compare/v1.2.0...v1.3.0) (2026-03-07)
+
+### Features
+
+* **controller:** adiciona métodos para listar alimentos por grupo, ([40d6203](https://github.com/CesarAVB/food-equivalence-api/commit/40d62039dd2f85313f599f766e8f84821a88d179))
+* **dto:** adiciona AlimentoListaDTO para representar dados de alimentos ([1425b70](https://github.com/CesarAVB/food-equivalence-api/commit/1425b7061cf7a62c963276bb9eed34850b25ff7f))
+* **repository:** adiciona novos métodos de busca e contagem no ([8cfedd4](https://github.com/CesarAVB/food-equivalence-api/commit/8cfedd48f6af92d785c732767b2dd41886f58fa2))
+* **service:** adiciona métodos para calcular equivalências, listar ([5b4d948](https://github.com/CesarAVB/food-equivalence-api/commit/5b4d9482b05d144df5b0fca5f32bfb4da22bb867))
+
+### Bug Fixes
+
+* **config:** altera configuração do Hibernate para não atualizar o ([bef63af](https://github.com/CesarAVB/food-equivalence-api/commit/bef63afda794de04b039439b3d5d12c9c8b72304))
+
 ## [1.2.0](https://github.com/CesarAVB/food-equivalence-api/compare/v1.1.0...v1.2.0) (2026-03-07)
 
 ### Features
