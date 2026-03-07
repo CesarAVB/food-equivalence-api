@@ -1,13 +1,20 @@
 package br.com.sistema.equivalence.dtos.request;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record CalcularEquivalenciasRequest(
-        @NotNull(message = "ID do alimento é obrigatório")
-        Integer alimentoId,
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CalcularEquivalenciasRequest {
 
-        @NotNull(message = "Quantidade é obrigatória")
-        @Positive(message = "Quantidade deve ser maior que 0")
-        Double quantidade
-) {}
+    // ====================================================
+    // Atributos - Dados da Requisição
+    // ====================================================
+    private Integer alimentoId;
+
+    private Double quantidade;
+}
