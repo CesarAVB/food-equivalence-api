@@ -1,13 +1,22 @@
 package br.com.sistema.equivalence.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import br.com.sistema.equivalence.converter.GrupoAlimentarConverter;
+import br.com.sistema.equivalence.enums.GrupoAlimentar;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import br.com.sistema.equivalence.enums.GrupoAlimentar;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_substituicao")
@@ -24,7 +33,7 @@ public class Alimento {
     @Column(name = "codigo_substituicao", nullable = false)
     private String codigoTaco;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = GrupoAlimentarConverter.class)
     @Column(name = "grupo", nullable = false)
     private GrupoAlimentar grupo;
 
