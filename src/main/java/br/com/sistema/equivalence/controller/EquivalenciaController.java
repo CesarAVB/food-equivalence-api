@@ -43,8 +43,8 @@ public class EquivalenciaController {
     public ResponseEntity<List<AlimentoListaDTO>> listarAlimentosPorGrupo(
             @PathVariable String grupo) {
         try {
-            // Converter usando o método fromDescricao que busca pela descrição
-            GrupoAlimentar grupoAlimentar = GrupoAlimentar.fromDescricao(grupo);
+            // Converter de "Carboidratos" para GrupoAlimentar.CARBOIDRATOS
+            GrupoAlimentar grupoAlimentar = converterDescricaoParaEnum(grupo);
             List<AlimentoListaDTO> alimentos = equivalenciaService.listarAlimentosPorGrupo(grupoAlimentar);
             return ResponseEntity.ok(alimentos);
         } catch (IllegalArgumentException e) {
@@ -74,5 +74,17 @@ public class EquivalenciaController {
             @RequestParam String descricao) {
         List<AlimentoListaDTO> alimentos = equivalenciaService.buscarAlimentos(descricao);
         return ResponseEntity.ok(alimentos);
+    }
+
+    // ====================================================
+    // Método Privado - Converter Descrição para Enum
+    // ====================================================
+    private GrupoAlimentar converterDescricaoParaEnum(String descricao) {
+        for (GrupoAlimentar grupo : GrupoAlimentar.values()) {
+            if (grupo.getDescricao().equals(descricao)) {
+                return grupo;
+            }
+        }
+        throw new IllegalArgumentException("Grupo não encontrado: " + descricao);
     }
 }
