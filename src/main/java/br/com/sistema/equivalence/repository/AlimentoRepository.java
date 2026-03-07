@@ -12,17 +12,19 @@ import java.util.List;
 public interface AlimentoRepository extends JpaRepository<Alimento, Integer> {
 
     // ====================================================
-    // Métodos - Buscar por Grupo (Enum)
+    // Buscar por Grupo - Ordenado alfabeticamente
     // ====================================================
+    @Query("SELECT a FROM Alimento a WHERE a.grupo = ?1 ORDER BY a.descricao ASC")
     List<Alimento> findByGrupo(GrupoAlimentar grupo);
 
     // ====================================================
-    // Métodos - Buscar por Descrição
+    // Buscar por Descrição - Ordenado alfabeticamente
     // ====================================================
+    @Query("SELECT a FROM Alimento a WHERE LOWER(a.descricao) LIKE LOWER(CONCAT('%', ?1, '%')) ORDER BY a.descricao ASC")
     List<Alimento> findByDescricaoIgnoreCaseContaining(String descricao);
 
     // ====================================================
-    // Métodos - Grupos Distintos (Query SQL Nativa)
+    // Grupos Distintos - Ordenado
     // ====================================================
     @Query(value = "SELECT DISTINCT grupo FROM tbl_substituicao ORDER BY grupo", nativeQuery = true)
     List<String> findDistinctGrupos();
