@@ -1,25 +1,16 @@
 package br.com.sistema.equivalence.entity;
 
-import java.time.LocalDateTime;
-
-import br.com.sistema.equivalence.enums.GrupoAlimentar;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import br.com.sistema.equivalence.enums.GrupoAlimentar;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tbl_alimentos")
+@Table(name = "tbl_substituicao")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,7 +21,7 @@ public class Alimento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "codigo_taco", nullable = false)
+    @Column(name = "codigo_substituicao", nullable = false)
     private String codigoTaco;
 
     @Enumerated(EnumType.STRING)
@@ -40,38 +31,8 @@ public class Alimento {
     @Column(name = "descricao", nullable = false)
     private String descricao;
 
-    @Column(name = "umidade")
-    private Double umidade;
-
     @Column(name = "energia_kcal", nullable = false)
     private Double energiaKcal;
-
-    @Column(name = "energia_kj")
-    private Double energiaKj;
-
-    @Column(name = "proteina_g")
-    private Double proteinaG;
-
-    @Column(name = "lipideos_g")
-    private Double lipideosG;
-
-    @Column(name = "colesterol_mg")
-    private Double colesterolMg;
-
-    @Column(name = "carboidratos_g")
-    private Double carboidratosG;
-
-    @Column(name = "fibra_alimentar_g")
-    private Double fibraAlimentarG;
-
-    @Column(name = "cinzas_g")
-    private Double cinzasG;
-
-    @Column(name = "observacao")
-    private String observacao;
-
-    @Column(name = "fonte")
-    private String fonte;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
@@ -81,12 +42,12 @@ public class Alimento {
 
     @PrePersist
     protected void onCreate() {
-        criadoEm = LocalDateTime.now();
-        atualizadoEm = LocalDateTime.now();
+        this.criadoEm = LocalDateTime.now();
+        this.atualizadoEm = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        atualizadoEm = LocalDateTime.now();
+        this.atualizadoEm = LocalDateTime.now();
     }
 }
