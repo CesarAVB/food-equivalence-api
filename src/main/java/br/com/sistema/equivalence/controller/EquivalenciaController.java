@@ -43,16 +43,15 @@ public class EquivalenciaController {
     public ResponseEntity<List<AlimentoListaDTO>> listarAlimentosPorGrupo(
             @PathVariable String grupo) {
         try {
-            // Converter de CARBOIDRATOS para Carboidratos (formato do banco)
-            GrupoAlimentar grupoAlimentar = GrupoAlimentar.valueOf(grupo.toUpperCase());
+            // Converter usando o método fromDescricao que busca pela descrição
+            GrupoAlimentar grupoAlimentar = GrupoAlimentar.fromDescricao(grupo);
             List<AlimentoListaDTO> alimentos = equivalenciaService.listarAlimentosPorGrupo(grupoAlimentar);
             return ResponseEntity.ok(alimentos);
         } catch (IllegalArgumentException e) {
             System.err.println("❌ Grupo não encontrado: " + grupo);
-            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            System.err.println("❌ Erro ao listar alimentos:");
+            System.err.println("❌ Erro ao listar alimentos: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
