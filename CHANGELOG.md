@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/CesarAVB/food-equivalence-api/compare/v1.4.2...v1.5.0) (2026-03-07)
+
+### Features
+
+* **GrupoAlimentarConverter:** implementa conversor para persistência de ([7372aee](https://github.com/CesarAVB/food-equivalence-api/commit/7372aee476f7053b2754bb62b645933213601361))
+
 ## [1.4.2](https://github.com/CesarAVB/food-equivalence-api/compare/v1.4.1...v1.4.2) (2026-03-07)
 
 ### Bug Fixes
