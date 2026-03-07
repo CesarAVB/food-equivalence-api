@@ -1,11 +1,5 @@
 package br.com.sistema.equivalence.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
-import br.com.sistema.equivalence.dtos.request.CalcularEquivalenciasRequest;
 import br.com.sistema.equivalence.dtos.response.AlimentoDTO;
 import br.com.sistema.equivalence.dtos.response.AlimentoListaDTO;
 import br.com.sistema.equivalence.dtos.response.EquivalenciaResponse;
@@ -15,7 +9,12 @@ import br.com.sistema.equivalence.enums.GrupoAlimentar;
 import br.com.sistema.equivalence.exception.AlimentoNaoEncontradoException;
 import br.com.sistema.equivalence.exception.QuantidadeInvalidaException;
 import br.com.sistema.equivalence.repository.AlimentoRepository;
+import br.com.sistema.equivalence.dtos.request.CalcularEquivalenciasRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
