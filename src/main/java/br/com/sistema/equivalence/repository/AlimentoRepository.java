@@ -12,7 +12,7 @@ import java.util.List;
 public interface AlimentoRepository extends JpaRepository<Alimento, Integer> {
 
     // ====================================================
-    // Métodos - Buscar por Grupo
+    // Métodos - Buscar por Grupo (Enum)
     // ====================================================
     List<Alimento> findByGrupo(GrupoAlimentar grupo);
 
