@@ -1,3 +1,10 @@
+## [1.2.0](https://github.com/CesarAVB/food-equivalence-api/compare/v1.1.0...v1.2.0) (2026-03-07)
+
+### Features
+
+* **changelog:** atualiza CHANGELOG.md para versão 1.1.0 com novos ([ccd2a97](https://github.com/CesarAVB/food-equivalence-api/commit/ccd2a973002bb99a16eb5b8770e007ac1eb416f9))
+* **readme:** adiciona documentação detalhada da API Food Equivalence ([593bf51](https://github.com/CesarAVB/food-equivalence-api/commit/593bf51423a3d7261455e05b7265bf8a9f77f7c8))
+
 ## [1.1.0](https://github.com/CesarAVB/food-equivalence-api/compare/v1.0.0...v1.1.0) (2026-03-07)
 
 ### Features
