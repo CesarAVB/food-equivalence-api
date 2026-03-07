@@ -24,52 +24,46 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EquivalenciaController {
 
-  private final EquivalenciaService equivalenciaService;
+    private final EquivalenciaService equivalenciaService;
 
-  // ====================================================
-  // Calcular Equivalências de Alimentos
-  // ====================================================
-  @PostMapping("/calcular")
-  public ResponseEntity<EquivalenciaResponse> calcularEquivalencias(
-    @Valid @RequestBody CalcularEquivalenciasRequest request
-  ) {
-    EquivalenciaResponse response = equivalenciaService.calcularEquivalencias(request);
-    return ResponseEntity.ok(response);
-  }
-
-  // ====================================================
-  // Listar Alimentos por Grupo Específico
-  // ====================================================
-  @GetMapping("/alimentos/grupo/{grupo}")
-  public ResponseEntity<List<AlimentoListaDTO>> listarAlimentosPorGrupo(
-    @PathVariable String grupo
-  ) {
-    try {
-      GrupoAlimentar grupoAlimentar = GrupoAlimentar.valueOf(grupo);
-      List<AlimentoListaDTO> alimentos = equivalenciaService.listarAlimentosPorGrupo(grupoAlimentar);
-      return ResponseEntity.ok(alimentos);
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().build();
+    // ====================================================
+    // Calcular Equivalências de Alimentos
+    // ====================================================
+    @PostMapping("/calcular")
+    public ResponseEntity<EquivalenciaResponse> calcularEquivalencias(@Valid @RequestBody CalcularEquivalenciasRequest request) {
+        EquivalenciaResponse response = equivalenciaService.calcularEquivalencias(request);
+        return ResponseEntity.ok(response);
     }
-  }
 
-  // ====================================================
-  // Listar Todos os Grupos Disponíveis
-  // ====================================================
-  @GetMapping("/grupos")
-  public ResponseEntity<List<String>> listarGrupos() {
-    List<String> grupos = equivalenciaService.listarGrupos();
-    return ResponseEntity.ok(grupos);
-  }
+    // ====================================================
+    // Listar Alimentos por Grupo Específico
+    // ====================================================
+    @GetMapping("/alimentos/grupo/{grupo}")
+    public ResponseEntity<List<AlimentoListaDTO>> listarAlimentosPorGrupo(@PathVariable String grupo) {
+        try {
+            GrupoAlimentar grupoAlimentar = GrupoAlimentar.valueOf(grupo);
+            List<AlimentoListaDTO> alimentos = equivalenciaService.listarAlimentosPorGrupo(grupoAlimentar);
+            return ResponseEntity.ok(alimentos);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
-  // ====================================================
-  // Buscar Alimentos por Descrição
-  // ====================================================
-  @GetMapping("/alimentos/buscar")
-  public ResponseEntity<List<AlimentoListaDTO>> buscarAlimentos(
-    @RequestParam String descricao
-  ) {
-    List<AlimentoListaDTO> alimentos = equivalenciaService.buscarAlimentos(descricao);
-    return ResponseEntity.ok(alimentos);
-  }
+    // ====================================================
+    // Listar Todos os Grupos Disponíveis
+    // ====================================================
+    @GetMapping("/grupos")
+    public ResponseEntity<List<String>> listarGrupos() {
+        List<String> grupos = equivalenciaService.listarGrupos();
+        return ResponseEntity.ok(grupos);
+    }
+
+    // ====================================================
+    // Buscar Alimentos por Descrição
+    // ====================================================
+    @GetMapping("/alimentos/buscar")
+    public ResponseEntity<List<AlimentoListaDTO>> buscarAlimentos(@RequestParam String descricao) {
+        List<AlimentoListaDTO> alimentos = equivalenciaService.buscarAlimentos(descricao);
+        return ResponseEntity.ok(alimentos);
+    }
 }
