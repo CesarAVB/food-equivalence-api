@@ -1,3 +1,9 @@
+## [1.4.2](https://github.com/CesarAVB/food-equivalence-api/compare/v1.4.1...v1.4.2) (2026-03-07)
+
+### Bug Fixes
+
+* **config:** update datasource credentials for MySQL connection ([9a0142f](https://github.com/CesarAVB/food-equivalence-api/commit/9a0142f9b1a33221c2f31e4b15de7d4dd7bd54dc))
+
 ## [1.4.1](https://github.com/CesarAVB/food-equivalence-api/compare/v1.4.0...v1.4.1) (2026-03-07)
 
 ### Bug Fixes
