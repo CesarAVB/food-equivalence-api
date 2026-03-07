@@ -17,11 +17,11 @@ public enum GrupoAlimentar {
     }
 
     // ====================================================
-    // Converter Descrição para Enum
+    // Método - Converter pela Descrição
     // ====================================================
     public static GrupoAlimentar fromDescricao(String descricao) {
         for (GrupoAlimentar grupo : GrupoAlimentar.values()) {
-            if (grupo.descricao.equals(descricao)) {
+            if (grupo.descricao.equalsIgnoreCase(descricao)) {
                 return grupo;
             }
         }
