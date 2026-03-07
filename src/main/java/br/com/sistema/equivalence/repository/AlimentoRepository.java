@@ -1,13 +1,12 @@
 package br.com.sistema.equivalence.repository;
 
-import java.util.List;
-
+import br.com.sistema.equivalence.entity.Alimento;
+import br.com.sistema.equivalence.enums.GrupoAlimentar;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.sistema.equivalence.entity.Alimento;
-import br.com.sistema.equivalence.enums.GrupoAlimentar;
+import java.util.List;
 
 @Repository
 public interface AlimentoRepository extends JpaRepository<Alimento, Integer> {
@@ -23,8 +22,8 @@ public interface AlimentoRepository extends JpaRepository<Alimento, Integer> {
     List<Alimento> findByDescricaoIgnoreCaseContaining(String descricao);
 
     // ====================================================
-    // Métodos - Grupos Distintos (Retorna String)
+    // Métodos - Grupos Distintos (Query SQL Nativa)
     // ====================================================
-    @Query("SELECT DISTINCT a.grupo.descricao FROM Alimento a ORDER BY a.grupo.descricao")
+    @Query(value = "SELECT DISTINCT grupo FROM tbl_substituicao ORDER BY grupo", nativeQuery = true)
     List<String> findDistinctGrupos();
 }
