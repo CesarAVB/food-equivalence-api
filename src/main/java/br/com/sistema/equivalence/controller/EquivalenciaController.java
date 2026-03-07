@@ -30,8 +30,7 @@ public class EquivalenciaController {
     // Calcular Equivalências de Alimentos
     // ====================================================
     @PostMapping("/calcular")
-    public ResponseEntity<EquivalenciaResponse> calcularEquivalencias(
-            @Valid @RequestBody CalcularEquivalenciasRequest request) {
+    public ResponseEntity<EquivalenciaResponse> calcularEquivalencias(@Valid @RequestBody CalcularEquivalenciasRequest request) {
         EquivalenciaResponse response = equivalenciaService.calcularEquivalencias(request);
         return ResponseEntity.ok(response);
     }
@@ -40,19 +39,20 @@ public class EquivalenciaController {
     // Listar Alimentos por Grupo Específico
     // ====================================================
     @GetMapping("/alimentos/grupo/{grupo}")
-    public ResponseEntity<List<AlimentoListaDTO>> listarAlimentosPorGrupo(
-            @PathVariable String grupo) {
+    public ResponseEntity<List<AlimentoListaDTO>> listarAlimentosPorGrupo(@PathVariable String grupo) {
         try {
-            // Converter de "Carboidratos" para GrupoAlimentar.CARBOIDRATOS
-            GrupoAlimentar grupoAlimentar = converterDescricaoParaEnum(grupo);
+            GrupoAlimentar grupoAlimentar = converterDescricaoParaEnum(grupo); // Converter de "Carboidratos" para GrupoAlimentar.CARBOIDRATOS
             List<AlimentoListaDTO> alimentos = equivalenciaService.listarAlimentosPorGrupo(grupoAlimentar);
             return ResponseEntity.ok(alimentos);
+            
         } catch (IllegalArgumentException e) {
             System.err.println("❌ Grupo não encontrado: " + grupo);
             return ResponseEntity.badRequest().build();
+            
         } catch (Exception e) {
             System.err.println("❌ Erro ao listar alimentos: " + e.getMessage());
             e.printStackTrace();
+            
             return ResponseEntity.status(500).build();
         }
     }
@@ -70,8 +70,7 @@ public class EquivalenciaController {
     // Buscar Alimentos por Descrição
     // ====================================================
     @GetMapping("/alimentos/buscar")
-    public ResponseEntity<List<AlimentoListaDTO>> buscarAlimentos(
-            @RequestParam String descricao) {
+    public ResponseEntity<List<AlimentoListaDTO>> buscarAlimentos(@RequestParam String descricao) {
         List<AlimentoListaDTO> alimentos = equivalenciaService.buscarAlimentos(descricao);
         return ResponseEntity.ok(alimentos);
     }
