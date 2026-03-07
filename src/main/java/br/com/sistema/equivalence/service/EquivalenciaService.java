@@ -24,17 +24,14 @@ public class EquivalenciaService {
     private final AlimentoRepository alimentoRepository;
 
     // ====================================================
-    // Listar Grupos Disponíveis
+    // Métodos - Listar Grupos Disponíveis
     // ====================================================
     public List<String> listarGrupos() {
-        return alimentoRepository.findDistinctGruposEnum()
-            .stream()
-            .map(GrupoAlimentar::getDescricao)
-            .collect(Collectors.toList());
+        return alimentoRepository.findDistinctGrupos();
     }
 
     // ====================================================
-    // Listar Alimentos por Grupo
+    // Métodos - Listar Alimentos por Grupo
     // ====================================================
     public List<AlimentoListaDTO> listarAlimentosPorGrupo(GrupoAlimentar grupo) {
         List<Alimento> alimentos = alimentoRepository.findByGrupo(grupo);
@@ -50,7 +47,7 @@ public class EquivalenciaService {
     }
 
     // ====================================================
-    // Buscar Alimentos por Descrição
+    // Métodos - Buscar Alimentos por Descrição
     // ====================================================
     public List<AlimentoListaDTO> buscarAlimentos(String descricao) {
         List<Alimento> alimentos = alimentoRepository.findByDescricaoIgnoreCaseContaining(descricao);
@@ -66,7 +63,7 @@ public class EquivalenciaService {
     }
 
     // ====================================================
-    // Calcular Equivalências
+    // Métodos - Calcular Equivalências
     // ====================================================
     public EquivalenciaResponse calcularEquivalencias(CalcularEquivalenciasRequest request) {
         validarQuantidade(request.getQuantidade());
