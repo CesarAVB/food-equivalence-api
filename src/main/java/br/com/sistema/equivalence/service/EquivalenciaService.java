@@ -1,6 +1,5 @@
 package br.com.sistema.equivalence.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,136 +21,121 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EquivalenciaService {
 
-  private final AlimentoRepository alimentoRepository;
+    private final AlimentoRepository alimentoRepository;
 
-  // ====================================================
-  // Métodos - Calcular Equivalências de Alimentos
-  // ====================================================
-  public EquivalenciaResponse calcularEquivalencias(CalcularEquivalenciasRequest request) {
-    validarQuantidade(request.quantidade());
-
-    Alimento alimento = obterAlimentoPorId(request.alimentoId());
-    Double caloriasTotais = calcularCaloriasTotais(request.quantidade(), alimento.getEnergiaKcal());
-
-    List<EquivalenteDTO> equivalentes = construirEquivalentes(alimento, caloriasTotais);
-
-    return new EquivalenciaResponse(
-      converterParaAlimentoDTO(alimento),
-      request.quantidade(),
-      caloriasTotais,
-      equivalentes
-    );
-  }
-
-  // ====================================================
-  // Métodos - Listar Alimentos por Grupo Específico
-  // ====================================================
-  public List<AlimentoListaDTO> listarAlimentosPorGrupo(GrupoAlimentar grupo) {
-    return alimentoRepository.findByGrupo(grupo).stream().map(alimento -> new AlimentoListaDTO(
-        alimento.getId(),
-        alimento.getDescricao(),
-        alimento.getGrupo().getDescricao(),
-        alimento.getEnergiaKcal()
-      )).collect(Collectors.toList());
-  }
-
-  // ====================================================
-  // Métodos - Listar Todos os Grupos Disponíveis
-  // ====================================================
-  public List<String> listarGrupos() {
-    return new ArrayList<>(java.util.Arrays.asList(GrupoAlimentar.values())).stream()
-      .map(GrupoAlimentar::getDescricao)
-      .sorted()
-      .collect(Collectors.toList());
-  }
-
-  // ====================================================
-  // Métodos - Buscar Alimentos por Descrição
-  // ====================================================
-  public List<AlimentoListaDTO> buscarAlimentos(String descricao) {
-    if (descricao == null || descricao.trim().isEmpty()) {
-      throw new IllegalArgumentException("Descrição não pode estar vazia");
+    // ====================================================
+    // Listar Grupos Disponíveis
+    // ====================================================
+    public List<String> listarGrupos() {
+        return alimentoRepository.findDistinctGrupos();
     }
 
-    return alimentoRepository.findByDescricaoContainingIgnoreCase(descricao.trim()).stream().map(alimento -> new AlimentoListaDTO(
-        alimento.getId(),
-        alimento.getDescricao(),
-        alimento.getGrupo().getDescricao(),
-        alimento.getEnergiaKcal()
-      )).collect(Collectors.toList());
-  }
-
-  // ====================================================
-  // Métodos Privados - Obter Alimento por ID
-  // ====================================================
-  private Alimento obterAlimentoPorId(Integer id) {
-    return alimentoRepository.findById(id).orElseThrow(() -> new AlimentoNaoEncontradoException("Alimento com ID " + id + " não encontrado"));
-  }
-
-  // ====================================================
-  // Métodos Privados - Validar Quantidade
-  // ====================================================
-  private void validarQuantidade(Double quantidade) {
-    if (quantidade == null || quantidade <= 0) {
-      throw new QuantidadeInvalidaException("Quantidade deve ser maior que 0");
+    // ====================================================
+    // Listar Alimentos por Grupo
+    // ====================================================
+    public List<AlimentoListaDTO> listarAlimentosPorGrupo(GrupoAlimentar grupo) {
+        List<Alimento> alimentos = alimentoRepository.findByGrupo(grupo);
+        
+        return alimentos.stream()
+            .map(alimento -> new AlimentoListaDTO(
+                alimento.getId(),
+                alimento.getDescricao(),
+                alimento.getGrupo().getDescricao(),
+                alimento.getEnergiaKcal()
+            ))
+            .collect(Collectors.toList());
     }
-  }
 
-  // ====================================================
-  // Métodos Privados - Calcular Calorias Totais
-  // ====================================================
-  private Double calcularCaloriasTotais(Double quantidade, Double kcalPor100g) {
-    return (quantidade * kcalPor100g) / 100;
-  }
+    // ====================================================
+    // Buscar Alimentos por Descrição
+    // ====================================================
+    public List<AlimentoListaDTO> buscarAlimentos(String descricao) {
+        List<Alimento> alimentos = alimentoRepository.findByDescricaoIgnoreCaseContaining(descricao);
+        
+        return alimentos.stream()
+            .map(alimento -> new AlimentoListaDTO(
+                alimento.getId(),
+                alimento.getDescricao(),
+                alimento.getGrupo().getDescricao(),
+                alimento.getEnergiaKcal()
+            ))
+            .collect(Collectors.toList());
+    }
 
-  // ====================================================
-  // Métodos Privados - Calcular Quantidade Equivalente
-  // ====================================================
-  private Double calcularQuantidadeEquivalente(Double caloriasTotais, Double kcalEquivalentePor100g) {
-    return (caloriasTotais * 100) / kcalEquivalentePor100g;
-  }
-
-  // ====================================================
-  // Métodos Privados - Calcular Diferença Percentual
-  // ====================================================
-  private Double calcularDiferencaPercentual(Double caloriasTotais, Double caloriaEquivalente) {
-    return Math.abs(caloriasTotais - caloriaEquivalente) / caloriasTotais * 100;
-  }
-
-  // ====================================================
-  // Métodos Privados - Converter para DTO Alimento
-  // ====================================================
-  private AlimentoDTO converterParaAlimentoDTO(Alimento alimento) {
-    return new AlimentoDTO(
-      alimento.getId(),
-      alimento.getCodigoTaco(),
-      alimento.getGrupo(),
-      alimento.getDescricao(),
-      alimento.getEnergiaKcal()
-    );
-  }
-
-  // ====================================================
-  // Métodos Privados - Construir Equivalentes
-  // ====================================================
-  private List<EquivalenteDTO> construirEquivalentes(Alimento alimentoBase, Double caloriasTotais) {
-    List<Alimento> alimentosDoGrupo = alimentoRepository.findByGrupoAndIdNot(alimentoBase.getGrupo(), alimentoBase.getId());
-
-    return alimentosDoGrupo.stream().map(alimento -> {
-        Double quantidadeEquivalente = calcularQuantidadeEquivalente(caloriasTotais, alimento.getEnergiaKcal());
-        Double caloriaEquivalente = (quantidadeEquivalente * alimento.getEnergiaKcal()) / 100;
-        Double diferencaPercentual = calcularDiferencaPercentual(caloriasTotais, caloriaEquivalente);
-
-        return new EquivalenteDTO(
-          alimento.getId(),
-          alimento.getDescricao(),
-          Math.round(quantidadeEquivalente * 100.0) / 100.0,
-          alimento.getEnergiaKcal(),
-          Math.round(caloriaEquivalente * 100.0) / 100.0,
-          Math.round(diferencaPercentual * 100.0) / 100.0
+    // ====================================================
+    // Calcular Equivalências
+    // ====================================================
+    public EquivalenciaResponse calcularEquivalencias(CalcularEquivalenciasRequest request) {
+        validarQuantidade(request.getQuantidade());
+        
+        Alimento alimentoSelecionado = buscarAlimentoPorId(request.getAlimentoId());
+        
+        Double caloriasSelecionadas = calcularCalorias(alimentoSelecionado.getEnergiaKcal(), request.getQuantidade());
+        
+        List<Alimento> alimentosMesmoGrupo = alimentoRepository.findByGrupo(alimentoSelecionado.getGrupo());
+        
+        List<EquivalenteDTO> equivalentes = gerarEquivalentes(alimentosMesmoGrupo, alimentoSelecionado, caloriasSelecionadas);
+        
+        return new EquivalenciaResponse(
+            converterParaDTO(alimentoSelecionado),
+            request.getQuantidade(),
+            caloriasSelecionadas,
+            equivalentes
         );
-      })
-      .sorted((a, b) -> Double.compare(a.diferencaPercentual(), b.diferencaPercentual()))
-      .collect(Collectors.toList());
-  }
+    }
+
+    // ====================================================
+    // Métodos Privados - Validações
+    // ====================================================
+    private void validarQuantidade(Double quantidade) {
+        if (quantidade == null || quantidade <= 0) {
+            throw new QuantidadeInvalidaException("Quantidade deve ser maior que 0");
+        }
+    }
+
+    private Alimento buscarAlimentoPorId(Integer alimentoId) {
+        return alimentoRepository.findById(alimentoId)
+            .orElseThrow(() -> new AlimentoNaoEncontradoException("Alimento com ID " + alimentoId + " não encontrado"));
+    }
+
+    // ====================================================
+    // Métodos Privados - Cálculos
+    // ====================================================
+    private Double calcularCalorias(Double kcalPor100g, Double quantidade) {
+        return (kcalPor100g / 100) * quantidade;
+    }
+
+    private List<EquivalenteDTO> gerarEquivalentes(List<Alimento> alimentos, Alimento alimentoSelecionado, Double caloriasAlvo) {
+        return alimentos.stream()
+            .filter(alimento -> !alimento.getId().equals(alimentoSelecionado.getId()))
+            .map(alimento -> calcularEquivalente(alimento, caloriasAlvo))
+            .collect(Collectors.toList());
+    }
+
+    private EquivalenteDTO calcularEquivalente(Alimento alimento, Double caloriasAlvo) {
+        Double quantidadeEquivalente = (caloriasAlvo * 100) / alimento.getEnergiaKcal();
+        Double diferencaPercentual = Math.abs((alimento.getEnergiaKcal() - 100) / 100.0);
+        
+        return new EquivalenteDTO(
+            alimento.getId(),
+            alimento.getDescricao(),
+            Math.round(quantidadeEquivalente * 100.0) / 100.0,
+            alimento.getEnergiaKcal(),
+            caloriasAlvo,
+            diferencaPercentual
+        );
+    }
+
+    // ====================================================
+    // Métodos Privados - Conversões
+    // ====================================================
+    private AlimentoDTO converterParaDTO(Alimento alimento) {
+        return new AlimentoDTO(
+            alimento.getId(),
+            alimento.getCodigoTaco(),
+            alimento.getGrupo(),
+            alimento.getDescricao(),
+            alimento.getEnergiaKcal()
+        );
+    }
 }
