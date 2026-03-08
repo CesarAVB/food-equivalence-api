@@ -1,353 +1,421 @@
-# Food Equivalence API
+# 🍎 Food Equivalence API - Backend
 
-Sistema de cálculo de equivalências alimentares baseado em dados nutricionais da TACO, permitindo substituições de alimentos por equivalentes calóricos no mesmo grupo alimentar.
+Sistema de equivalência alimentar por calorias com Spring Boot e MySQL.
 
-## 📋 Descrição
+## 📋 Descrição do Projeto
 
-A **Food Equivalence API** é uma solução REST que facilita a busca por alimentos equivalentes em valor calórico. Nutricionistas e aplicações de saúde podem usar esta API para fornecer alternativas alimentares mantendo o mesmo aporte calórico.
+API REST que permite calcular equivalências entre alimentos do mesmo grupo com base em suas calorias. Usuários podem buscar alimentos por grupo ou descrição e obter sugestões de substituições equivalentes em termos nutricionais.
 
-### Funcionalidade Principal
+**Exemplo:** Se o usuário seleciona 100g de Arroz (125 kcal), o sistema sugere quantos gramas de outros carboidratos forneceriam a mesma quantidade de calorias.
 
-- Selecione um alimento e uma quantidade em gramas
-- A API calcula o total de calorias
-- Retorna uma lista de alimentos do mesmo grupo com quantidades equivalentes em calorias
-- Resultados ordenados por proximidade calórica
+---
 
-## 🚀 Tecnologias
+## 🏗️ Arquitetura
 
-- **Java 17+**
-- **Spring Boot 3.x**
-- **Spring Data JPA**
-- **MySQL**
-- **Lombok**
-- **Maven**
+### Banco de Dados
+- **Tabela:** `tbl_substituicao`
+- **Colunas:**
+  - `id` (INT, PK, Auto-increment)
+  - `codigo_substituicao` (VARCHAR 20, Unique)
+  - `grupo` (ENUM: 'Carboidratos', 'Frutas', 'Gordura Vegetal', 'Laticíneos', 'Proteína')
+  - `descricao` (VARCHAR 255)
+  - `energia_kcal` (DECIMAL 10,2)
+  - `created_at` (TIMESTAMP)
+  - `updated_at` (TIMESTAMP)
 
-## 📦 Dependências
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-validation</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.mysql</groupId>
-        <artifactId>mysql-connector-j</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <optional>true</optional>
-    </dependency>
-</dependencies>
-```
-
-## 🔧 Configuração
-
-### 1. Pré-requisitos
-
-- Java 17 ou superior
-- MySQL 8.0 ou superior
-- Maven 3.6+
-
-### 2. Clonar o repositório
-
-```bash
-git clone https://github.com/seu-usuario/food-equivalence-api.git
-cd food-equivalence-api
-```
-
-### 3. Configurar banco de dados
-
-Edite `src/main/resources/application.yml`:
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/food_equivalence
-    username: seu_usuario
-    password: sua_senha
-```
-
-### 4. Criar banco de dados
-
-```sql
-CREATE DATABASE food_equivalence CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-### 5. Criar tabela
-
-```sql
-USE food_equivalence;
-
-CREATE TABLE tbl_alimentos (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    codigo_taco VARCHAR(10) NOT NULL,
-    grupo VARCHAR(100) NOT NULL,
-    descricao VARCHAR(255) NOT NULL,
-    umidade DECIMAL(10,2),
-    energia_kcal DECIMAL(10,2) NOT NULL,
-    energia_kj DECIMAL(10,2),
-    proteina_g DECIMAL(10,2),
-    lipideos_g DECIMAL(10,2),
-    colesterol_mg DECIMAL(10,2),
-    carboidratos_g DECIMAL(10,2),
-    fibra_alimentar_g DECIMAL(10,2),
-    cinzas_g DECIMAL(10,2),
-    observacao TEXT,
-    fonte VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_grupo (grupo)
-);
-```
-
-### 6. Inserir dados TACO
-
-Importe os dados da Tabela de Composição de Alimentos (TACO) brasileira na tabela `tbl_alimentos`.
-
-### 7. Build e execução
-
-```bash
-# Build
-mvn clean install
-
-# Executar
-mvn spring-boot:run
-```
-
-A aplicação estará disponível em: `http://localhost:8080`
-
-## 📚 Documentação da API
-
-### Endpoint Principal
-
-#### **POST** `/api/v1/equivalencias/calcular`
-
-Calcula alimentos equivalentes em calorias para um alimento selecionado.
-
-**Request Body:**
-
-```json
-{
-    "alimentoId": 1,
-    "quantidade": 100
-}
-```
-
-**Parâmetros:**
-
-| Campo | Tipo | Descrição | Obrigatório |
-|-------|------|-----------|-------------|
-| `alimentoId` | Integer | ID do alimento na TACO | Sim |
-| `quantidade` | Double | Quantidade em gramas | Sim |
-
-**Response (200 OK):**
-
-```json
-{
-    "alimentoSelecionado": {
-        "id": 1,
-        "codigoTaco": "1",
-        "grupo": "CEREAIS_E_DERIVADOS",
-        "descricao": "Arroz, integral, cozido",
-        "energiaKcal": 123.53
-    },
-    "quantidade": 100.0,
-    "calorias": 123.53,
-    "equivalentes": [
-        {
-            "id": 7,
-            "descricao": "Aveia, flocos, crua",
-            "quantidadeEquivalenteG": 31.36,
-            "kcalPor100g": 393.82,
-            "kcalTotais": 123.53,
-            "diferencaPercentual": 0.0
-        },
-        {
-            "id": 64,
-            "descricao": "Abóbora, cabotian, cozida",
-            "quantidadeEquivalenteG": 257.27,
-            "kcalPor100g": 48.04,
-            "kcalTotais": 123.53,
-            "diferencaPercentual": 0.0
-        }
-    ]
-}
-```
-
-### Response Fields
-
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `alimentoSelecionado` | Object | Dados do alimento selecionado |
-| `quantidade` | Double | Quantidade em gramas informada |
-| `calorias` | Double | Total de calorias calculadas |
-| `equivalentes` | Array | Lista de equivalentes ordenados por proximidade calórica |
-| `diferencaPercentual` | Double | Margem de erro em relação às calorias calculadas (%) |
-
-### Codes de Erro
-
-| Code | Erro | Descrição |
-|------|------|-----------|
-| 400 | `Quantidade inválida` | Quantidade deve ser maior que 0 |
-| 400 | `Erro de validação` | Campos obrigatórios não preenchidos |
-| 404 | `Alimento não encontrado` | ID do alimento não existe na base |
-| 500 | `Erro interno do servidor` | Erro inesperado no processamento |
-
-## 📊 Exemplo de Uso
-
-### cURL
-
-```bash
-curl -X POST http://localhost:8080/api/v1/equivalencias/calcular \
-  -H "Content-Type: application/json" \
-  -d '{
-    "alimentoId": 1,
-    "quantidade": 100
-  }'
-```
-
-### JavaScript/Fetch
-
-```javascript
-const request = {
-    alimentoId: 1,
-    quantidade: 100
-};
-
-fetch('http://localhost:8080/api/v1/equivalencias/calcular', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(request)
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Erro:', error));
-```
-
-### Python/Requests
-
-```python
-import requests
-import json
-
-url = "http://localhost:8080/api/v1/equivalencias/calcular"
-payload = {
-    "alimentoId": 1,
-    "quantidade": 100
-}
-
-response = requests.post(url, json=payload)
-print(json.dumps(response.json(), indent=2))
-```
-
-## 🏗️ Estrutura do Projeto
+### Estrutura do Projeto
 
 ```
 src/main/java/br/com/sistema/equivalence/
+├── converter/
+│   └── GrupoAlimentarConverter.java
 ├── controller/
-│   └── EquivalenciaController.java        # Endpoints REST
-├── service/
-│   └── EquivalenciaService.java           # Lógica de cálculo
-├── repository/
-│   └── AlimentoRepository.java            # Acesso ao banco
+│   └── EquivalenciaController.java
 ├── entity/
-│   ├── Alimento.java                      # Entidade JPA
-│   └── GrupoAlimentar.java                # Enum de grupos
+│   └── Alimento.java
+├── enums/
+│   └── GrupoAlimentar.java
+├── repository/
+│   └── AlimentoRepository.java
+├── service/
+│   └── EquivalenciaService.java
 ├── dtos/
 │   ├── request/
 │   │   └── CalcularEquivalenciasRequest.java
 │   └── response/
 │       ├── AlimentoDTO.java
-│       ├── EquivalenteDTO.java
-│       └── EquivalenciaResponse.java
+│       ├── AlimentoListaDTO.java
+│       ├── EquivalenciaResponse.java
+│       └── EquivalenteDTO.java
 ├── exception/
 │   ├── AlimentoNaoEncontradoException.java
-│   ├── QuantidadeInvalidaException.java
-│   └── GlobalExceptionHandler.java
-├── config/
-│   └── JpaConfig.java
-└── FoodEquivalenceApplication.java        # Classe principal
+│   └── QuantidadeInvalidaException.java
+└── Startup.java
 ```
-
-## 🧮 Fórmulas Utilizadas
-
-### Cálculo de Calorias Totais
-
-```
-calorias_totais = (quantidade × kcal_por_100g) / 100
-```
-
-### Cálculo de Quantidade Equivalente
-
-```
-quantidade_equivalente = (calorias_totais × 100) / kcal_equivalente_por_100g
-```
-
-### Cálculo de Diferença Percentual
-
-```
-diferenca_percentual = |calorias_totais - calorias_equivalente| / calorias_totais × 100
-```
-
-## 📝 Grupos Alimentares Suportados
-
-- Cereais e derivados
-- Verduras, hortaliças e derivados
-- Frutas e derivados
-- Gorduras e óleos
-- Pescados e frutos do mar
-- Carnes e derivados
-- Leite e derivados
-- Bebidas (alcoólicas e não alcoólicas)
-- Ovos e derivados
-- Produtos açucarados
-- Miscelâneas
-- Outros alimentos industrializados
-- Alimentos preparados
-- Leguminosas e derivados
-- Nozes e sementes
-
-## 🔐 Tratamento de Erros
-
-A API implementa tratamento global de exceções com respostas padronizadas em JSON incluindo:
-
-- Timestamp da requisição
-- Status HTTP
-- Tipo de erro
-- Mensagem descritiva
-- Campos inválidos (quando aplicável)
-
-## 📦 Fonte de Dados
-
-Os dados nutricionais utilizados são provenientes da **Tabela de Composição de Alimentos (TACO)** - Edição 4ª - desenvolvida pela Universidade Federal de São Paulo (UNIFESP).
-
-Referência: http://www.nepa.mpsp.mp.br/
-
-## 🤝 Contribuindo
-
-1. Faça um Fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
 
 ---
 
-**Desenvolvido para nutricionistas e aplicações de saúde**
+## 🔑 Componentes Principais
+
+### 1. Entity - Alimento
+- Mapeia a tabela `tbl_substituicao`
+- Campo `grupo` é um **Enum** (`GrupoAlimentar`)
+- Usa **Converter JPA** para mapear Enum ↔ String/ENUM do banco
+
+### 2. Enum - GrupoAlimentar
+```java
+CARBOIDRATOS("Carboidratos")
+FRUTAS("Frutas")
+GORDURA_VEGETAL("Gordura Vegetal")
+LATICINEOS("Laticíneos")
+PROTEINA("Proteína")
+```
+- Cada valor tem uma descrição que corresponde aos valores do banco
+
+### 3. Converter - GrupoAlimentarConverter
+- Converte Enum → String para salvar no banco
+- Converte String → Enum ao carregar do banco
+- Usa o método `getDescricao()` do Enum
+
+### 4. Repository
+- Usa Spring Data JPA
+- Métodos com `Sort` para ordenação alfabética
+- Query nativa para grupos distintos
+
+### 5. Service
+- Lógica de negócio
+- Cálculo de equivalências por caloria
+- Retorna DTOs tipados
+
+### 6. Controller
+- Endpoints REST
+- Conversão de descrição para Enum
+- Tratamento de erros
+
+---
+
+## 📡 Endpoints
+
+### 1. Listar Grupos Disponíveis
+```
+GET /api/v1/equivalencias/grupos
+```
+**Resposta:**
+```json
+[
+  "Carboidratos",
+  "Frutas",
+  "Gordura Vegetal",
+  "Laticíneos",
+  "Proteína"
+]
+```
+
+---
+
+### 2. Listar Alimentos por Grupo
+```
+GET /api/v1/equivalencias/alimentos/grupo/{grupo}
+```
+**Exemplo:** `GET /api/v1/equivalencias/alimentos/grupo/Carboidratos`
+
+**Resposta:**
+```json
+[
+  {
+    "id": 1,
+    "descricao": "Abóbora Cabotian",
+    "grupo": "Carboidratos",
+    "energiaKcal": 55.0
+  },
+  {
+    "id": 2,
+    "descricao": "Água de Coco",
+    "grupo": "Carboidratos",
+    "energiaKcal": 21.0
+  }
+]
+```
+**Ordenação:** Alfabética por descrição (ASC)
+
+---
+
+### 3. Buscar Alimentos por Descrição
+```
+GET /api/v1/equivalencias/alimentos/buscar?descricao={termo}
+```
+**Exemplo:** `GET /api/v1/equivalencias/alimentos/buscar?descricao=banana`
+
+**Resposta:**
+```json
+[
+  {
+    "id": 5,
+    "descricao": "Banana",
+    "grupo": "Frutas",
+    "energiaKcal": 91.0
+  }
+]
+```
+**Ordenação:** Alfabética por descrição (ASC)
+
+---
+
+### 4. Calcular Equivalências
+```
+POST /api/v1/equivalencias/calcular
+Content-Type: application/json
+
+{
+  "alimentoId": 3,
+  "quantidade": 100
+}
+```
+
+**Resposta:**
+```json
+{
+  "alimentoSelecionado": {
+    "id": 3,
+    "codigoTaco": "CARB.003",
+    "grupo": "CARBOIDRATOS",
+    "descricao": "Arroz branco ou integral",
+    "energiaKcal": 125.0
+  },
+  "quantidade": 100.0,
+  "calorias": 125.0,
+  "equivalentes": [
+    {
+      "id": 8,
+      "descricao": "Cuscuz (desidratado)",
+      "quantidadeEquivalenteG": 33.2,
+      "kcalPor100g": 376.0,
+      "kcalTotais": 125.0,
+      "diferencaPercentual": 2.76
+    }
+  ]
+}
+```
+
+---
+
+## 🗄️ Banco de Dados
+
+### DDL - Criar Tabela
+```sql
+CREATE TABLE tbl_substituicao (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codigo_substituicao VARCHAR(20) NOT NULL UNIQUE,
+    grupo ENUM(
+        'Carboidratos',
+        'Frutas',
+        'Gordura Vegetal',
+        'Laticíneos',
+        'Proteína'
+    ) NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    energia_kcal DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_grupo (grupo),
+    INDEX idx_descricao (descricao)
+);
+```
+
+### Dados - 95 Alimentos
+
+| Grupo | Quantidade |
+|-------|-----------|
+| Frutas | 31 |
+| Carboidratos | 27 |
+| Proteína | 15 |
+| Laticíneos | 16 |
+| Gordura Vegetal | 6 |
+| **Total** | **95** |
+
+---
+
+## 🔧 Tecnologias
+
+- **Framework:** Spring Boot 3.x
+- **Banco de Dados:** MySQL 8.x
+- **ORM:** JPA/Hibernate
+- **Build:** Maven
+- **Java:** 17+
+- **Lombok:** Redução de boilerplate
+
+---
+
+## 📦 Dependências Principais
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+</dependency>
+```
+
+---
+
+## ⚙️ Configuração (application.properties)
+
+```properties
+# Server
+server.port=8080
+
+# Database
+spring.datasource.url=jdbc:mysql://localhost:3306/seu_banco
+spring.datasource.username=root
+spring.datasource.password=sua_senha
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA/Hibernate
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Logging
+logging.level.br.com.sistema.equivalence=INFO
+```
+
+---
+
+## 🚀 Como Executar
+
+### 1. Clonar o repositório
+```bash
+git clone https://github.com/seu-usuario/food-equivalence-api.git
+cd food-equivalence-api
+```
+
+### 2. Configurar banco de dados
+```bash
+# Executar script de criação
+mysql -u root -p < src/main/resources/schema.sql
+```
+
+### 3. Instalar dependências
+```bash
+mvn clean install
+```
+
+### 4. Executar a aplicação
+```bash
+mvn spring-boot:run
+```
+
+A API estará disponível em: `http://localhost:8080`
+
+---
+
+## 🧪 Testes com Postman/Insomnia
+
+### 1. Listar grupos
+```
+GET http://localhost:8080/api/v1/equivalencias/grupos
+```
+
+### 2. Listar alimentos de um grupo
+```
+GET http://localhost:8080/api/v1/equivalencias/alimentos/grupo/Frutas
+```
+
+### 3. Buscar alimento
+```
+GET http://localhost:8080/api/v1/equivalencias/alimentos/buscar?descricao=banana
+```
+
+### 4. Calcular equivalência
+```
+POST http://localhost:8080/api/v1/equivalencias/calcular
+Body:
+{
+  "alimentoId": 1,
+  "quantidade": 100
+}
+```
+
+---
+
+## 🔐 Segurança
+
+- ✅ Validação de entrada em DTOs
+- ✅ Tratamento de exceções customizadas
+- ✅ CORS habilitado para frontend
+- ⚠️ Em produção, adicionar autenticação/autorização
+
+---
+
+## 📝 Detalhes Técnicos
+
+### Converter JPA
+O `GrupoAlimentarConverter` é responsável por:
+- Converter `GrupoAlimentar.CARBOIDRATOS` → `'Carboidratos'` (ao salvar)
+- Converter `'Carboidratos'` → `GrupoAlimentar.CARBOIDRATOS` (ao carregar)
+
+Isso permite que a Entity use **Enum** enquanto o banco armazena **String/ENUM**.
+
+### Ordenação
+Todos os endpoints que retornam listas usam:
+```java
+Sort sort = Sort.by("descricao").ascending();
+```
+
+### Cálculo de Equivalência
+```
+Calorias do alimento = (energiaKcal / 100) × quantidade
+Quantidade equivalente = (calorias alvo × 100) / energiaKcal
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Erro: "No enum constant"
+**Causa:** Mismatch entre Enum Java e valores do banco
+**Solução:** Verificar se o Converter está sendo aplicado corretamente
+
+### Erro: "Alimento não encontrado"
+**Causa:** ID inválido na requisição
+**Solução:** Verificar IDs disponíveis no banco
+
+### Erro: CORS
+**Causa:** Frontend em domínio diferente
+**Solução:** Já configurado com `@CrossOrigin` nos Controllers (se necessário)
+
+---
+
+## 📚 Documentação Adicional
+
+- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
+- [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
+- [MySQL Documentation](https://dev.mysql.com/doc/)
+
+---
+
+## 👨‍💻 Autor
+
+**César Augusto Vieira Bezerra**
+- Portfolio: https://portfolio.cesaraugusto.dev.br/
+- API Produção: https://api-subistituicao.cesaravb.com.br
+
+---
+
+## 📄 Licença
+
+Este projeto está sob licença MIT.
